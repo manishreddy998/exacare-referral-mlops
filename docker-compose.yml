@@ -31,7 +31,7 @@ services:
 
   pipeline:
     <<: *app
-    command: dagster asset materialize -m orchestration.definitions --select "*"
+    command: dagster job execute -m orchestration.definitions -j referral_pipeline
     depends_on:
       mlflow: {condition: service_healthy}
 

@@ -3,7 +3,7 @@
 import json
 
 from dagster import (AssetExecutionContext, Definitions, MaterializeResult, MetadataValue, ScheduleDefinition,
-                     asset, define_asset_job)
+                     asset, define_asset_job, in_process_executor)
 
 from referral_mlops import pipeline as p
 
@@ -74,7 +74,9 @@ def run_summary(context: AssetExecutionContext) -> MaterializeResult:
     return MaterializeResult(metadata={"production": json.loads((p.RESULTS / "gate.json").read_text())["production_after"]})
 
 
-referral_job = define_asset_job("referral_pipeline", selection="*")
+# Steps run one at a time: OCR already uses every core, and running evaluations side by side would
+# both slow each other down and distort the per packet cost numbers the release gate compares.
+referral_job = define_asset_job("referral_pipeline", selection="*", executor_def=in_process_executor)
 
 defs = Definitions(
     assets=[referral_packets, *EVALS, release_gate, drift_monitor, phi_audit, run_summary],

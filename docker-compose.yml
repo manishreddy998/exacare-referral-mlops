@@ -1,0 +1,60 @@
+# One command: docker compose up --build
+# mlflow (registry) -> pipeline (Dagster run, exits) -> api + dashboard + dagster UI
+x-app: &app
+  build: .
+  image: referral-mlops:dev
+  environment:
+    MLFLOW_TRACKING_URI: http://mlflow:5000
+    DAGSTER_HOME: /app/.dagster_home
+    PHI_AUDIT_EXTRA: /app/mlflow_data
+  volumes:
+    - ./data:/app/data
+    - ./results:/app/results
+    - ./mlflow_data:/app/mlflow_data:ro
+    - dagster_home:/app/.dagster_home
+
+services:
+  mlflow:
+    image: referral-mlops:dev
+    build: .
+    command: >
+      mlflow server --host 0.0.0.0 --port 5000
+      --backend-store-uri sqlite:////mlflow/mlflow.db
+      --artifacts-destination /mlflow/artifacts --serve-artifacts
+    volumes:
+      - ./mlflow_data:/mlflow
+    ports: ["5000:5000"]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/health')"]
+      interval: 5s
+      retries: 30
+
+  pipeline:
+    <<: *app
+    command: dagster asset materialize -m orchestration.definitions --select "*"
+    depends_on:
+      mlflow: {condition: service_healthy}
+
+  api:
+    <<: *app
+    command: uvicorn referral_mlops.api.main:app --host 0.0.0.0 --port 8000
+    ports: ["8000:8000"]
+    depends_on:
+      pipeline: {condition: service_completed_successfully}
+
+  dashboard:
+    <<: *app
+    command: streamlit run dashboard/app.py --server.address 0.0.0.0 --server.port 8501 --server.headless true
+    ports: ["8501:8501"]
+    depends_on:
+      pipeline: {condition: service_completed_successfully}
+
+  dagster-ui:
+    <<: *app
+    command: dagster-webserver -m orchestration.definitions -h 0.0.0.0 -p 3000
+    ports: ["3000:3000"]
+    depends_on:
+      pipeline: {condition: service_completed_successfully}
+
+volumes:
+  dagster_home:

@@ -1,0 +1,5 @@
+name: rules-v1
+description: Baseline. Fixed labels and exact vocabulary lookups, OCR without page repair.
+extractor: rules_v1
+ocr: {dpi: 300, fix_rotation: false, deskew: false, denoise: false}
+calibrate: false

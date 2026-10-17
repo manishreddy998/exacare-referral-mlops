@@ -1,0 +1,5 @@
+name: layout-v2
+description: Section aware extraction with OCR repair, vocabulary validation, cross-page voting and a trained confidence calibrator. OCR with rotation fix, deskew and denoise.
+extractor: layout_v2
+ocr: {dpi: 300, fix_rotation: true, deskew: true, denoise: true}
+calibrate: true

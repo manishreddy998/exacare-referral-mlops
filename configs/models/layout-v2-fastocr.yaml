@@ -1,0 +1,5 @@
+name: layout-v2-fastocr
+description: Same extractor as layout-v2 but skips rotation fix, deskew and denoise to cut OCR time.
+extractor: layout_v2
+ocr: {dpi: 300, fix_rotation: false, deskew: false, denoise: false}
+calibrate: true

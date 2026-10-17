@@ -1,0 +1,24 @@
+data:
+  main_packets: 300
+  drift_packets: 80
+  seed: 42
+  train_share: 0.6   # first 60% of the main batch trains the confidence calibrator and sets the review threshold
+release:
+  production: rules-v1          # what is serving before this run
+  candidates: [layout-v2, layout-v2-fastocr]
+gate:
+  max_micro_f1_drop: 0.005
+  max_field_f1_drop: 0.02
+  max_p95_seconds: 20           # latency budget per packet on one CPU
+  max_cost_increase: 0.25       # a candidate may cost up to 25% more per packet for free...
+  min_gain_for_cost: 0.01       # ...or more than that only if micro F1 improves by at least this much
+review:
+  target_error_capture: 0.90    # the confidence cut should send at least 90% of known wrong values to review
+  max_review_share: 0.15        # ...but never more than 15% of all values (reviewer budget)
+  min_ocr_conf: 0.80            # any value read from an OCR line below this confidence goes to a person
+  unreadable_page_conf: 50      # a page below this OCR confidence sends the whole packet to review
+drift:
+  psi_alert: 0.2
+cost:
+  usd_per_cpu_second: 0.000024  # assumed compute rate, set to your platform's price
+workers: 8

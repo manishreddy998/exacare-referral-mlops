@@ -90,6 +90,7 @@ def _fax_cover(r: Referral, rng: random.Random, n_pages: int) -> Page:
 def _demographics(r: Referral, rng: random.Random, layout: str) -> Page:
     e = r.extras
     p = Page("face_sheet")
+    p.text(r.referring_facility.upper())
     labels = {
         "hospital_portal": ("Patient Name", "Date of Birth", "Sex", "Primary Insurance", "Member ID"),
         "discharge_summary": ("NAME", "DOB", "GENDER", "Payer", "Policy #"),
@@ -113,6 +114,7 @@ def _demographics(r: Referral, rng: random.Random, layout: str) -> Page:
 def _clinical(r: Referral, rng: random.Random, layout: str) -> Page:
     e = r.extras
     p = Page("clinical")
+    p.text(r.referring_facility)
     uncoded = set(e["uncoded"])
     prov = _provider_variant(r.referring_provider, rng)
     if layout == "hospital_portal":

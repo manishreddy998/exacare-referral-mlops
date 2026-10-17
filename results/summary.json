@@ -1,0 +1,153 @@
+{
+  "models": {
+    "rules-v1": {
+      "micro_f1": 0.7591792656587473,
+      "micro_precision": 0.8876262626262627,
+      "micro_recall": 0.6632075471698113,
+      "packet_exact_match": 0.025,
+      "seconds_per_packet": 1.573104140491705,
+      "usd_per_1000_packets": 0.03775449937180092,
+      "auto_accept_share": 0.7992424242424242,
+      "auto_accept_precision": 0.9241706161137441,
+      "by_capture": {
+        "digital": {
+          "packets": 54,
+          "micro_f1": 0.9241603466955579,
+          "seconds_per_packet": 0.004690322592624498
+        },
+        "scan": {
+          "packets": 37,
+          "micro_f1": 0.6105263157894737,
+          "seconds_per_packet": 2.755534465621659
+        },
+        "fax": {
+          "packets": 29,
+          "micro_f1": 0.5756457564575646,
+          "seconds_per_packet": 2.9849808348621205
+        }
+      },
+      "version": "3"
+    },
+    "layout-v2": {
+      "micro_f1": 0.9955008287946957,
+      "micro_precision": 0.9995244888254874,
+      "micro_recall": 0.9915094339622641,
+      "packet_exact_match": 0.8583333333333333,
+      "seconds_per_packet": 3.2069864458249566,
+      "usd_per_1000_packets": 0.07696767469979895,
+      "auto_accept_share": 0.995244888254874,
+      "auto_accept_precision": 1.0,
+      "by_capture": {
+        "digital": {
+          "packets": 54,
+          "micro_f1": 0.9994722955145119,
+          "seconds_per_packet": 0.007123970111058076
+        },
+        "scan": {
+          "packets": 37,
+          "micro_f1": 0.994535519125683,
+          "seconds_per_packet": 5.54058106729723
+        },
+        "fax": {
+          "packets": 29,
+          "micro_f1": 0.9894937917860553,
+          "seconds_per_packet": 6.188006193896556
+        }
+      },
+      "version": "1"
+    },
+    "layout-v2-fastocr": {
+      "micro_f1": 0.881869542886492,
+      "micro_precision": 0.967869222096956,
+      "micro_recall": 0.8099056603773584,
+      "packet_exact_match": 0.44166666666666665,
+      "seconds_per_packet": 1.5764516469917225,
+      "usd_per_1000_packets": 0.03783483952780134,
+      "auto_accept_share": 0.6228861330326945,
+      "auto_accept_precision": 0.9981900452488688,
+      "by_capture": {
+        "digital": {
+          "packets": 54,
+          "micro_f1": 0.9994722955145119,
+          "seconds_per_packet": 0.0075256110186038075
+        },
+        "scan": {
+          "packets": 37,
+          "micro_f1": 0.8095659875996457,
+          "seconds_per_packet": 2.7594119880270376
+        },
+        "fax": {
+          "packets": 29,
+          "micro_f1": 0.7195402298850575,
+          "seconds_per_packet": 2.988605899551783
+        }
+      },
+      "version": "2"
+    }
+  },
+  "gate": [
+    {
+      "candidate": "layout-v2",
+      "production": "rules-v1",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "candidate": "layout-v2-fastocr",
+      "production": "layout-v2",
+      "passed": false,
+      "reasons": [
+        "micro F1 fell 0.9955 to 0.8819",
+        "patient_name F1 fell 0.996 to 0.890",
+        "dob F1 fell 0.987 to 0.846",
+        "sex F1 fell 0.996 to 0.733",
+        "payer F1 fell 1.000 to 0.857",
+        "member_id F1 fell 0.992 to 0.679",
+        "referring_provider F1 fell 1.000 to 0.740",
+        "service_requested F1 fell 1.000 to 0.854",
+        "diagnoses F1 fell 0.995 to 0.934",
+        "medications F1 fell 0.993 to 0.927",
+        "allergies F1 fell 1.000 to 0.877"
+      ]
+    }
+  ],
+  "drift_alerts": [
+    "ocr_mean_conf",
+    "ocr_low_conf_ratio",
+    "native_text_ratio",
+    "skew_abs_mean",
+    "sharpness",
+    "words_per_page",
+    "mean_field_confidence",
+    "review_share"
+  ],
+  "control_alerts": [],
+  "drift_accuracy": {
+    "reference_micro_f1": 0.9955008287946957,
+    "current_micro_f1": 0.9159727479182437,
+    "current_fields": {
+      "patient_name": 0.9090909090909091,
+      "dob": 0.8671328671328671,
+      "sex": 0.9115646258503401,
+      "payer": 0.9743589743589743,
+      "member_id": 0.8516129032258064,
+      "referring_provider": 0.8421052631578948,
+      "referring_facility": 1.0,
+      "service_requested": 0.980891719745223,
+      "diagnoses": 0.9426987060998151,
+      "medications": 0.8852459016393442,
+      "allergies": 0.9517241379310345
+    }
+  },
+  "drift_review": {
+    "threshold": 0.995,
+    "min_ocr_conf": 0.8,
+    "auto_accept_share": 0.7902834008097166,
+    "auto_accept_precision": 0.9907786885245902,
+    "review_share": 0.2097165991902834,
+    "wrong_values_caught_by_review": 0.64,
+    "packets_flagged_unreadable": 3,
+    "missed_values_in_flagged_or_incomplete_packets": 0.8934010152284264
+  },
+  "phi_audit_passed": true
+}

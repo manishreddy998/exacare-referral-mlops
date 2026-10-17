@@ -1,0 +1,47 @@
+{
+  "decisions": [
+    {
+      "production": "rules-v1",
+      "candidate": "layout-v2",
+      "passed": true,
+      "reasons": [],
+      "micro_f1": {
+        "production": 0.7591792656587473,
+        "candidate": 0.9955008287946957
+      },
+      "seconds_per_packet": {
+        "production": 1.573104140491705,
+        "candidate": 3.2069864458249566
+      },
+      "candidate_version": "1"
+    },
+    {
+      "production": "layout-v2",
+      "candidate": "layout-v2-fastocr",
+      "passed": false,
+      "reasons": [
+        "micro F1 fell 0.9955 to 0.8819",
+        "patient_name F1 fell 0.996 to 0.890",
+        "dob F1 fell 0.987 to 0.846",
+        "sex F1 fell 0.996 to 0.733",
+        "payer F1 fell 1.000 to 0.857",
+        "member_id F1 fell 0.992 to 0.679",
+        "referring_provider F1 fell 1.000 to 0.740",
+        "service_requested F1 fell 1.000 to 0.854",
+        "diagnoses F1 fell 0.995 to 0.934",
+        "medications F1 fell 0.993 to 0.927",
+        "allergies F1 fell 1.000 to 0.877"
+      ],
+      "micro_f1": {
+        "production": 0.9955008287946957,
+        "candidate": 0.881869542886492
+      },
+      "seconds_per_packet": {
+        "production": 3.2069864458249566,
+        "candidate": 1.5764516469917225
+      },
+      "candidate_version": "2"
+    }
+  ],
+  "production_after": "layout-v2"
+}

@@ -14,3 +14,4 @@ results/logs/
 secrets/
 *.json.key
 mlflow_data/
+results/review_queue.jsonl

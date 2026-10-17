@@ -1,5 +1,4 @@
 """Dagster assets for the referral pipeline. Each asset wraps one step in referral_mlops.pipeline."""
-from __future__ import annotations
 
 import json
 

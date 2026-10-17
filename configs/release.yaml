@@ -1,0 +1,3 @@
+# What CI compares on every push. Change `candidate` to the model config you want to ship.
+production: layout-v2
+candidate: layout-v2

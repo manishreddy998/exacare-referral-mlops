@@ -69,7 +69,7 @@ def norm_member(s: str | None) -> str | None:
 
 def normalize(field_name: str, value):
     if value is None:
-        return None
+        return [] if field_name in LIST_FIELDS else None
     if field_name in ("patient_name", "referring_provider"):
         return norm_person(value)
     if field_name == "member_id":

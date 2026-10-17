@@ -1,0 +1,48 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install Tesseract
+        run: sudo apt-get update && sudo apt-get install -y tesseract-ocr tesseract-ocr-osd
+      - run: pip install -r requirements.txt
+      - name: Unit and integration tests
+        env:
+          PYTHONPATH: src:.
+        run: pytest -q
+
+  release-gate:
+    needs: test
+    runs-on: ubuntu-latest
+    env:
+      PYTHONPATH: src:.
+      OMP_THREAD_LIMIT: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: sudo apt-get update && sudo apt-get install -y tesseract-ocr tesseract-ocr-osd
+      - run: pip install -r requirements.txt
+      - name: Gate the candidate in configs/release.yaml against production
+        run: python -m referral_mlops.gate --packets 40
+      - name: Negative control, a known worse candidate must be blocked
+        run: python -m referral_mlops.gate --packets 40 --candidate layout-v2-fastocr --expect-block
+
+  docker:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker compose build

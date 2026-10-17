@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+.venv/
+.env
+data/packets/
+data/ocr/
+data/*.db
+mlruns/
+mlartifacts/
+results/logs/
+*.egg-info/
+.pytest_cache/
+.dagster_home/
+secrets/
+*.json.key

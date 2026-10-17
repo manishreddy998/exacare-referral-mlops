@@ -1,0 +1,9 @@
+.git
+data
+results
+mlflow_data
+.dagster_home
+**/__pycache__
+.pytest_cache
+.env
+secrets

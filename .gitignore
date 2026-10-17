@@ -13,3 +13,4 @@ results/logs/
 .dagster_home/
 secrets/
 *.json.key
+mlflow_data/

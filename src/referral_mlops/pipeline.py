@@ -86,7 +86,7 @@ def _doc_row(pt, pred, threshold, min_ocr):
     return feats
 
 
-def evaluate_model(name: str, cfg: dict) -> dict:
+def evaluate_model(name: str, cfg: dict, track: bool = True) -> dict:
     """Train the calibrator on the train split, then score everything on the held out test split."""
     spec = ModelSpec.load(name)
     rows = manifest("main")
@@ -139,6 +139,8 @@ def evaluate_model(name: str, cfg: dict) -> dict:
     (RESULTS / f"eval_{name}.json").write_text(json.dumps(result, indent=2))
     log.info("evaluated %s micro_f1=%.4f cost=%.2fs/packet", name, m["micro_f1"], result["cost"]["seconds_per_packet_mean"])
 
+    if not track:
+        return result
     from referral_mlops import tracking
     tracking.setup()
     flat = {"micro_f1": m["micro_f1"], "micro_precision": m["micro_precision"], "micro_recall": m["micro_recall"],
@@ -293,7 +295,8 @@ def phi_audit() -> dict:
     dump = RESULTS / "logs" / "mlflow_tracking_dump.json"
     dump.write_text(json.dumps(tracking.tracking_dump(client), indent=2))
     keys = manifest("main") + manifest("drift")
-    targets = [RESULTS / "logs"] + [p for p in (ROOT / "mlartifacts", ROOT / "mlruns") if p.exists()]
+    extra = [Path(x) for x in os.environ.get("PHI_AUDIT_EXTRA", "").split(":") if x]
+    targets = [RESULTS / "logs"] + [p for p in (ROOT / "mlartifacts", ROOT / "mlruns", *extra) if p.exists()]
     res = phi.audit(targets, [k["answer"] for k in keys])
     (RESULTS / "phi_audit.json").write_text(json.dumps(res, indent=2))
     log.info("phi audit scanned %d files, leaks=%d", res["files_scanned"], len(res["leaks"]))

@@ -23,8 +23,19 @@ def training_rows(preds, golds, texts):
     return np.array(X), np.array(y)
 
 
+class HeuristicCalibrator:
+    """Fallback when the labelled data has no errors to learn from: keep the extractor's own score."""
+
+    def predict_proba(self, X):
+        p = np.clip(np.asarray(X)[:, 7], 0, 1)
+        return np.column_stack([1 - p, p])
+
+
 def fit(preds, golds, texts):
     X, y = training_rows(preds, golds, texts)
+    if len(set(y)) < 2:
+        return HeuristicCalibrator(), {"train_rows": int(len(y)), "train_error_rate": float(1 - y.mean()),
+                                       "fallback": 1}
     model = LogisticRegression(max_iter=2000, C=1.0)
     model.fit(X, y)
     p = model.predict_proba(X)[:, 1]
